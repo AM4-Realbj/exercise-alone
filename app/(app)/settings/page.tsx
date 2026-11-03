@@ -16,7 +16,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { signOut } from "@/app/login/actions";
 import { createClient } from "@/lib/supabase/server";
 
 import { updateDisplayName } from "./actions";
@@ -41,8 +40,7 @@ export default async function SettingsPage({
   const errorMessage = typeof error === "string" ? error : undefined;
 
   return (
-    <main className="flex flex-1 items-center justify-center px-6 py-24">
-      <Card className="w-full max-w-sm">
+    <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>설정</CardTitle>
           <CardDescription>{claims.email}</CardDescription>
@@ -64,13 +62,7 @@ export default async function SettingsPage({
             </FieldGroup>
             <Button type="submit">저장</Button>
           </form>
-          <form action={signOut}>
-            <Button type="submit" variant="outline" className="w-full">
-              로그아웃
-            </Button>
-          </form>
         </CardContent>
       </Card>
-    </main>
   );
 }

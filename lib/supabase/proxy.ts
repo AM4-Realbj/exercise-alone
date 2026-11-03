@@ -1,7 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PATHS = ["/settings"];
+// 로그인 없이 열 수 있는 경로. 나머지는 모두 로그인이 필요하다.
+const PUBLIC_PATHS = ["/login", "/auth"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -35,13 +36,23 @@ export async function updateSession(request: NextRequest) {
   const { data } = await supabase.auth.getClaims();
   const user = data?.claims;
 
-  const isProtected = PROTECTED_PATHS.some((path) =>
-    request.nextUrl.pathname.startsWith(path),
+  const { pathname } = request.nextUrl;
+  const isPublic = PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(`${path}/`),
   );
 
-  if (!user && isProtected) {
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  // 이미 로그인한 사용자가 로그인 화면을 열면 첫 화면으로 보낸다.
+  if (user && pathname === "/login") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    url.search = "";
     return NextResponse.redirect(url);
   }
 
