@@ -7,11 +7,11 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
 
   // next는 같은 사이트 안의 경로만 허용한다. "//evil.com" 같은 값은 기본 경로로 대체한다.
-  const requestedNext = searchParams.get("next") ?? "/settings";
+  const requestedNext = searchParams.get("next") ?? "/";
   const next =
     requestedNext.startsWith("/") && !requestedNext.startsWith("//")
       ? requestedNext
-      : "/settings";
+      : "/";
 
   if (code) {
     const supabase = await createClient();
